@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<TITLE>Win32::Process::List</TITLE>
+<BODY BGCOLOR="#ffffff" TEXT="#000000">
+<UL>
+<LI><A HREF="#NAME">NAME
+
+</A></LI>
+<LI><A HREF="#SYNOPSIS">SYNOPSIS
+
+</A></LI>
+<LI><A HREF="#DESCRIPTION">DESCRIPTION
+
+</A></LI>
+<UL>
+<LI><A HREF="#EXPORT">EXPORT
+
+</A></LI>
+</UL>
+<LI><A HREF="#AUTHOR">AUTHOR
+
+</A></LI>
+<LI><A HREF="#SEE%20ALSO">SEE ALSO
+
+</A></LI>
+</UL>
+<HR>
+<H1><A NAME="NAME">NAME
+
+</A></H1>
+
+<P>Win32::Process::List - Perl extension to get all processes and thier PID on a Win32 system
+
+</P><H1><A NAME="SYNOPSIS">SYNOPSIS
+
+</A></H1>
+
+<PRE>  use Win32::Process::List;
+  my $P = Win32::Process::List-&gt;new();	constructor
+  my @list = $P-&gt;GetProcesses();	returns an array of hashes
+  my %h = %{ $list[0] };	get the hash with processname and pid
+  foreach my $pr ( keys %h ) {
+  	print &quot;Process $pr has PID &quot; .  $h{$pr} . &quot;\n&quot;;
+  }
+  my $PID = $P-&gt;GetProcessPid(&quot;explorer&quot;); get the PID of process explorer.exe
+  my $np = $P-&gt;GetNProcesses();  returns the number of processes</PRE>
+<H1><A NAME="DESCRIPTION">DESCRIPTION
+
+</A></H1>
+
+<PRE>  Win32::Process::List is a module to get the running processes with their PID's from
+  a Win32 System. Please look at Win32/Process/List/processes.pl.</PRE>
+<H2><A NAME="EXPORT">EXPORT
+
+</A></H2>
+
+<P>None by default.
+
+
+</P><H1><A NAME="AUTHOR">AUTHOR
+
+</A></H1>
+
+<P>Reinhard Pagitsch, &lt;rpirpag@gmx.at&gt;
+
+</P><H1><A NAME="SEE%20ALSO">SEE ALSO
+
+</A></H1>
+
+<P><A HREF="perl.html">perl</A>.
+
+</P>
+</BODY>
+</HTML>
