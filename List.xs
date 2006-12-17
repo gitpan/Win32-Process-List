@@ -29,12 +29,12 @@ ListProcesses(needed,perror)
 		DWORD aProcesses[1024]; 
 		DWORD cbNeeded;
 		DWORD cProcesses;
-    	unsigned int i;
-    	char szProcessName[MAX_PATH] = "unknown";
-    	DWORD err;
-    	HMODULE hMod;
-		char tmp[1024];
-		char tmp1[1024];
+		unsigned int i;
+    		char szProcessName[MAX_PATH] = "unknown";
+    		DWORD err;
+    		HMODULE hMod;
+		char tmp[1024] = { 0 };
+		char tmp1[1024] = { 0 };
 		HV * rh;
 		//LPTSTR   wszMsgBuff[512];  // Buffer for text.
 		char   wszMsgBuff[512];
@@ -47,7 +47,7 @@ ListProcesses(needed,perror)
 	if(!EnumProcesses(aProcesses,sizeof(aProcesses),&cbNeeded))
 	{
 		err = GetLastError();
-		printf("Error in EnumProcesses\n");
+		//printf("Error in EnumProcesses\n");
 		dwChars = FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM |
                				FORMAT_MESSAGE_IGNORE_INSERTS,
 					NULL,
@@ -62,19 +62,24 @@ ListProcesses(needed,perror)
 		SvPOK_on(perror);
 		XPUSHs(sv_2mortal(newSViv(-1)));
 	}
+	
 	cProcesses = cbNeeded / sizeof(DWORD);
+	//printf("Number of processes: %d\n",cProcesses);
 	for ( i = 0; i < cProcesses; i++ ) {
-	     HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION|PROCESS_VM_READ,FALSE, aProcesses[i] );
+	     HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION|PROCESS_VM_READ,TRUE, aProcesses[i] );
 	     if(hProcess != NULL)
 	     {
+		cbNeeded=0;
 	     	if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod), &cbNeeded) > 0 )
 		{
         	    GetModuleBaseName( hProcess, hMod, szProcessName, sizeof(szProcessName) );
+        	    //printf("Storing: %s (%i) \n",szProcessName,aProcesses[i]);
         	    hv_store(rh,szProcessName,strlen(szProcessName),newSVnv(aProcesses[i]), 0);
         	} else {
+        		//printf("Error in EnumProcessModules\n");
         		if(strcmp(szProcessName, "unknown")) {
-			err = GetLastError();
-			printf("Error in EnumProcessModules\n");
+				err = GetLastError();
+				
 
 				dwChars = FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM |
                              				FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -88,26 +93,26 @@ ListProcesses(needed,perror)
 				sprintf(tmp, "EnumProcessModules: An error occured %s Process: (%s) PID: %i\n", wszMsgBuff,szProcessName, aProcesses[i]);
 		                sv_upgrade(perror,SVt_PVIV);
 				sv_setpvn(perror, tmp, strlen(tmp));
-				sv_setiv(perror,(IV) err);
+				//sv_setiv(perror,(IV) err);
 				SvPOK_on(perror);
 				XPUSHs(sv_2mortal(newSViv(-1)));
 			}
 		}
 
 	     } else {
-			err = GetLastError();
+	     		//printf("Process with PID %i could not opened\n", aProcesses[i]);
 			dwChars = FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM,
                              			NULL,
-                             			err,
+                             			GetLastError(),
                              			0,
                              			(LPTSTR)wszMsgBuff,
                              			512,
                              			NULL );
-			sprintf(tmp, "%s: %s", szProcessName, wszMsgBuff);
+			sprintf(tmp, "PID %i: %s", aProcesses[i], wszMsgBuff);
 			strcat(tmp1, tmp);
-		        sv_upgrade(perror,SVt_PVIV);
+			sv_upgrade(perror,SVt_PVIV);
 			sv_setpvn(perror, tmp1, strlen(tmp1));
-			sv_setiv(perror,(IV) err);
+			//sv_setiv(perror,(IV) err);
 			SvPOK_on(perror);
 			XPUSHs(sv_2mortal(newSViv(-1)));
 	    }
@@ -116,6 +121,7 @@ ListProcesses(needed,perror)
     	RETVAL = newRV((SV *)result);
 	OUTPUT:
 		RETVAL
+		perror
 	
 
 double

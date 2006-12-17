@@ -1,5 +1,8 @@
 Revision history for Perl extension Win32::Process::List.
 
+0.04  Sat Dez 17 2006
+	- changed error message to show PID's which can not accessed.
+
 0.03  Wed Aug 30 2006
 	- corrected README and CHANGES
 	
