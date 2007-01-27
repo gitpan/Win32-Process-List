@@ -4,6 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 use Carp;
+use Data::Dumper;
 
 require Exporter;
 require DynaLoader;
@@ -27,7 +28,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()
@@ -77,19 +78,42 @@ sub new
 		};
 	bless $self, $class;
 	my $error = undef;
-	my $y = undef;
-	my $err = ListProcesses($y, $error);
+	my $err = ListProcesses($error);
 	if($error) { 
 		$self->{isError} = 1;
 		$self->{Error} = $error;
 	}
-	my @arr = @{ $err };
-	$self->{processes} = [ @arr ];
-	my %h = %{ $arr[0] };
+	#my @arr = @{ $err };
+	# $self->{processes} = [ @arr ];
+	$self->{processes} = [ $err ];
+	my %h = %{ $err };
 	my $nProcesses = (scalar keys %h);
 	$self->{nProcesses} = $nProcesses;
 	return $self;
 	
+}
+
+sub ProcessAlive
+{
+	my $self = shift;
+	my $process=shift;
+	my $usePID=0;
+	if($process =~ /^\d*$/)	# PID
+	{
+		$usePID=1;
+	}
+	if($process !~ /\.exe/)
+	{
+		$process .= '.exe';
+	}
+	my $error = undef;
+	my $y = undef;
+	my $processes=ListProcesses($y, $error);
+	#my %h=%{@{$processes}[0]};
+	my %h=%{$processes};
+	my $pid=$h{$process};
+	
+	return $pid if $usePID == 0;
 }
 
 sub GetNProcesses
@@ -118,7 +142,7 @@ sub GetProcessPid
 	}
 	$self->{isError} = 1;
 	$self->{Error} = "Error: no PID found for $pr";
-	return ( qw/-1/ );
+	return( qw/-3/ );
 }
 
 sub GetProcesses
@@ -145,6 +169,12 @@ sub GetErrorText
 		return $self->{Error};
 	}
 	return;
+}
+
+DESTROY
+{
+	my $self = shift;
+	#print "destroying!\n";
 }
 
 # Autoload methods go after =cut, and are processed by the autosplit program.

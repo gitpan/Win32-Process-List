@@ -8,7 +8,7 @@ WriteMakefile(
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'List.pm', # retrieve abstract from module
        AUTHOR     => 'Reinhard Pagitsch <rpirpag@gmx.at>') : ()),
-    'LIBS'		=> ['Psapi.lib'], # e.g., '-lm'
+    #'LIBS'		=> ['Psapi.lib'], # e.g., '-lm'
     'DEFINE'		=> '', # e.g., '-DHAVE_SOMETHING'
 	# Insert -I. if you add *.h files later:
     'INC'		=> '', # e.g., '-I/usr/include/other'

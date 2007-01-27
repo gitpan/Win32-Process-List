@@ -15,11 +15,25 @@ ok(1); # If we made it this far, we're ok.
 # Insert your test code below, the Test module is use()ed here so read
 # its man page ( perldoc Test ) for help writing this test script.
 
-my $P = Win32::Process::List->new();
-if($P->IsError == 1)
-{
-	print "an Error occured: " . $P->GetErrorText . "\n";
-}
+#while(1) {
+	my $P = Win32::Process::List->new();
+	if($P->IsError == 1)
+	{
+		print "an Error occured: " . $P->GetErrorText . "\n";
+	}
+#	my @hPIDS = $P->GetProcessPid("hamster.exe");
+#	print "Return: " .  join(' ', @hPIDS) . "\n";
+	#undef  $P;
+#	sleep(1);
+#}
+#exit;
+
+#my $alive;
+#while($alive=$P->ProcessAlive("Hamster"))
+#{
+#	print "Hamster is alive\n";
+#	sleep(1);
+#}
 
 my %list = $P->GetProcesses();
 my $anz = scalar keys %list;

@@ -1,5 +1,8 @@
 Revision history for Perl extension Win32::Process::List.
 
+0.05  Sat Jan 27 2007
+	- XS code rewriten, now it uses tlhelp32 to get the process list
+
 0.04  Sat Dez 17 2006
 	- changed error message to show PID's which can not accessed.
 
