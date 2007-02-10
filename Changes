@@ -1,5 +1,10 @@
 Revision history for Perl extension Win32::Process::List.
 
+0.06  Feb 8 2007
+	- XS code changed to write the PID for the key and the processname as the value
+	  Had also to change the List.pm to use it in the GetProcessPid() function.
+	  Update of the POD regarding this.
+
 0.05  Sat Jan 27 2007
 	- XS code rewriten, now it uses tlhelp32 to get the process list
 

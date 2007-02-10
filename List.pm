@@ -28,7 +28,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()
@@ -126,23 +126,26 @@ sub GetProcessPid
 {
 	my $self = shift;
 	my $pr = shift;
+	my %ret;
+	$pr=lc($pr);
 	$self->{isError} = 0;
 	my @a = @{ $self->{processes} };
 	my %h = %{ $a[0] };
 	my $count = 0;
 	foreach my $key (keys %h)
 	{
-		if(lc($key) =~ /$pr/) { 
-			$a[$count] = $h{$key};
+		if(lc($h{$key}) =~ /$pr/) { 
+			#$a[$count] = $key;
+			$ret{$h{$key}}=$key;
 			$count++;
 		}
 	}
 	if($count > 0) {
-		return @a;
+		return %ret;
 	}
 	$self->{isError} = 1;
 	$self->{Error} = "Error: no PID found for $pr";
-	return( qw/-3/ );
+	return;
 }
 
 sub GetProcesses
@@ -191,10 +194,10 @@ Win32::Process::List - Perl extension to get all processes and thier PID on a Wi
 
   use Win32::Process::List;
   my $P = Win32::Process::List->new();	constructor
-  my @list = $P->GetProcesses();	returns an array of hashes
-  my %h = %{ $list[0] };	get the hash with processname and pid
-  foreach my $pr ( keys %h ) {
-  	print "Process $pr has PID " .  $h{$pr} . "\n";
+  my %list = $P->GetProcesses();	returns the hashes with PID and process name
+  foreach my $pr ( keys %list ) {
+	# $list{$key} is now the process name and $key is the PID
+	print sprintf("%30s has PID %15s", $list{$key}, $key) . "\n";
   }
   my $PID = $P->GetProcessPid("explorer"); get the PID of process explorer.exe
   my $np = $P->GetNProcesses();  returns the number of processes

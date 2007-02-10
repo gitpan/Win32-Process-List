@@ -13,15 +13,20 @@ my $anz = scalar keys %list;
 print "Anzal im Array= $anz\n";
 my $count = 0;
 foreach my $key (keys %list) {
-	my $pid = $list{$key};
-	print sprintf("%15s has PID %5i", $key, $pid) . "\n";
+	# $list{$key} is now the process name and $key is the PID
+	print sprintf("%20s has PID %10s", $list{$key}, $key) . "\n";
 	$count++;
 }
 print "Number of processes: $count\n";
 my $process = "explorer";
-my @hPIDS = $P->GetProcessPid($process);
-if($hPIDS[0] != -1) {
-	foreach ( 0 .. $#hPIDS ) {
-		print "$process has PID " . $hPIDS[$_] . "\n";
+my %hPIDS = $P->GetProcessPid($process);
+print keys (%hPIDS) . "\n";
+if(%hPIDS) {
+	foreach (keys  %hPIDS) {
+		print "$_ has PID " . $hPIDS{$_} . "\n";
 	}
+} else
+{
+	print "Process(s) not found\n";
+	exit;
 }

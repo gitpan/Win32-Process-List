@@ -41,11 +41,11 @@ print "Anzal im Array= $anz\n";
 my $count = 0;
 foreach my $key (keys %list) {
 	my $pid = $list{$key};
-	print sprintf("%15s has PID %5i", $key, $pid) . "\n";
+	print sprintf("%30s has PID %15s", $pid, $key) . "\n";
 	$count++;
 }
 print "Number of processes: $count\n";
-my $process = "explorer";
+my $process = "pocw3knl_Portal";
 my @hPIDS = $P->GetProcessPid($process);
 if($hPIDS[0] != -1) {
 	foreach ( 0 .. $#hPIDS ) {

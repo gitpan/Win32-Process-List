@@ -5,6 +5,7 @@
 #include <tlhelp32.h>
 
 
+int debug=0;
 void printError(char* msg, DWORD *err )
 {
 *err = GetLastError();
@@ -36,7 +37,11 @@ constant(char *name, int len, int arg)
 MODULE = Win32::Process::List		PACKAGE = Win32::Process::List		
 
 
-
+void
+Setdebug(deb)
+	int deb
+	PPCODE:
+		debug=deb;
 
 SV * 
 ListProcesses(perror)
@@ -48,10 +53,9 @@ ListProcesses(perror)
     		DWORD err;
 		HV * rh;
 		char   wszMsgBuff[512];
+		char   temp[512];
     CODE:
         SetLastError(0);
-    	//result = (AV *)sv_2mortal((SV *)newAV());
-    	//rh = (HV *)sv_2mortal((SV *)newHV());
     	rh = newHV();
     	hProcessSnap = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 );
     	if( hProcessSnap == INVALID_HANDLE_VALUE )
@@ -78,9 +82,15 @@ ListProcesses(perror)
 		{
 			  do
 			  {
-			  	if(hv_store(rh,pe32.szExeFile,strlen(pe32.szExeFile),newSVuv(pe32.th32ProcessID), 0)==NULL)
+			  	sprintf(temp, "%d", pe32.th32ProcessID);
+			  	if(debug==1) {
+			  		printf("Temp: %s\n",pe32.szExeFile);
+			  	}
+			  	
+			  	if(hv_store(rh,temp,strlen(temp),newSVpv(pe32.szExeFile, strlen(pe32.szExeFile)), 0)==NULL)
+			  	//if(hv_store(rh,pe32.szExeFile,strlen(pe32.szExeFile),newSVuv(pe32.th32ProcessID), 0)==NULL)
 			  	{
-			  		printf("can not store in rh\n");
+			  		printf("can not store %s in hash!\n", pe32.szExeFile);
 			  		
 			  	}
 			  } while( Process32Next( hProcessSnap, &pe32 ) );

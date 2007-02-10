@@ -3,7 +3,6 @@ Makefile.PL
 MANIFEST
 List.pm
 List.xs
-List.html
 README
 META.yml                                 Module meta-data (added by MakeMaker)
 processes.pl
