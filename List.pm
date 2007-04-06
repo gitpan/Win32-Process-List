@@ -28,40 +28,40 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
-sub AUTOLOAD {
+#sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()
     # XS function.  If a constant is not found then control is passed
     # to the AUTOLOAD in AutoLoader.
 
-    my $constname;
-    our $AUTOLOAD;
-    ($constname = $AUTOLOAD) =~ s/.*:://;
-    croak "& not defined" if $constname eq 'constant';
-    local $! = 0;
-    my $val = constant($constname, @_ ? $_[0] : 0);
-    if ($! != 0) {
-	if ($! =~ /Invalid/ || $!{EINVAL}) {
-	    $AutoLoader::AUTOLOAD = $AUTOLOAD;
-	    goto &AutoLoader::AUTOLOAD;
-	}
-	else {
-	    croak "Your vendor has not defined Win32::Process::List macro $constname";
-	}
-    }
-    {
-	no strict 'refs';
+#    my $constname;
+#   our $AUTOLOAD;
+#    ($constname = $AUTOLOAD) =~ s/.*:://;
+#    croak "& not defined" if $constname eq 'constant';
+#    local $! = 0;
+#    my $val = constant($constname, @_ ? $_[0] : 0);
+#    if ($! != 0) {
+#	if ($! =~ /Invalid/ || $!{EINVAL}) {
+#	    $AutoLoader::AUTOLOAD = $AUTOLOAD;
+#	    goto &AutoLoader::AUTOLOAD;
+#	}
+#	else {
+#	    croak "Your vendor has not defined Win32::Process::List macro $constname";
+#	}
+#   }
+#    {
+#	no strict 'refs';
 	# Fixed between 5.005_53 and 5.005_61
-	if ($] >= 5.00561) {
-	    *$AUTOLOAD = sub () { $val };
-	}
-	else {
-	    *$AUTOLOAD = sub { $val };
-	}
-    }
-    goto &$AUTOLOAD;
-}
+#	if ($] >= 5.00561) {
+#	    *$AUTOLOAD = sub () { $val };
+#	}
+#	else {
+#	    *$AUTOLOAD = sub { $val };
+#	}
+#   }
+#    goto &$AUTOLOAD;
+#}
 
 bootstrap Win32::Process::List $VERSION;
 
@@ -93,27 +93,74 @@ sub new
 	
 }
 
-sub ProcessAlive
+sub ProcessAliveNa
 {
 	my $self = shift;
-	my $process=shift;
-	my $usePID=0;
-	if($process =~ /^\d*$/)	# PID
-	{
-		$usePID=1;
-	}
-	if($process !~ /\.exe/)
+	my $process =shift;
+	if($process !~ /\.exe$/ )
 	{
 		$process .= '.exe';
 	}
+
+	$self->{Error}="";
+	$self->{isError}=0;
+	my $ret =ProcessAliveN($process, $self->{Error});
+	if($ret == -1) { $self->{isError}=1; }
+	return $ret;
+	
+	
+}
+
+sub ProcessAlivePid
+{
+	my $self = shift;
+	$self->{Error}="";
+	$self->{isError}=0;
+	my $ret = ProcessAliveP(shift,$self->{Error});
+	if($ret == -1) { $self->{isError}=1; }
+	return $ret;
+
+sub ProcessAliveName
+{
+	my $self = shift;
+	my $process=shift;
+	$process=lc($process);
+	my @procArr=();
+	my $alive = 0;
+	my %ret;
+	$self->{isError}=0;
+	$self->{Error}="";
+	if(ref($process) eq "ARRAY")
+	{
+		#my $count=0;
+		#@procArr=@{$process};
+		#foreach (@procArr)
+		#{
+		#	if($procArr[$count] !~ /\.exe$/ && $usePID == 0)
+		#	{
+		#		$procArr[$count]= $procArr[$count] . '.exe';
+		#	}
+		#	$count++;
+		#}
+		$self->{isError} = 1;
+		$self->{Error} = "ARRAY of processes not yet supported!";
+		return;
+	} else { 
+		if($process !~ /\.exe$/ )
+		{
+			$process .= '.exe';
+		}
+		push(@procArr, $process);
+	}
 	my $error = undef;
 	my $y = undef;
-	my $processes=ListProcesses($y, $error);
-	#my %h=%{@{$processes}[0]};
+	my $processes=ListProcesses($error);
 	my %h=%{$processes};
-	my $pid=$h{$process};
-	
-	return $pid if $usePID == 0;
+	foreach my $p (keys %h)
+	{
+		if(lc($h{$p}) eq $process) { $ret{$process} = 1; $alive=1; }
+	}
+	return %ret;
 }
 
 sub GetNProcesses

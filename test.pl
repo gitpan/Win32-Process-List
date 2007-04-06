@@ -29,11 +29,13 @@ ok(1); # If we made it this far, we're ok.
 #exit;
 
 #my $alive;
-#while($alive=$P->ProcessAlive("Hamster"))
-#{
-#	print "Hamster is alive\n";
-#	sleep(1);
-#}
+while($alive=$P->ProcessAliveNa("Hamster"))
+{
+	print "Hamster is alive\n";
+	sleep(1);
+}
+print "Exit now\n";
+exit;
 
 my %list = $P->GetProcesses();
 my $anz = scalar keys %list;

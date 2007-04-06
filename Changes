@@ -1,5 +1,9 @@
 Revision history for Perl extension Win32::Process::List.
 
+0.07  Feb 18 2007
+	- added 2 functions to XS and pm code: ProcessAliveP, ProcessAliveN
+	  
+
 0.06  Feb 8 2007
 	- XS code changed to write the PID for the key and the processname as the value
 	  Had also to change the List.pm to use it in the GetProcessPid() function.
