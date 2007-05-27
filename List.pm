@@ -28,7 +28,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 #sub AUTOLOAD {
     # This AUTOLOAD is used to 'autoload' constants from the constant()
@@ -244,7 +244,7 @@ Win32::Process::List - Perl extension to get all processes and thier PID on a Wi
   use Win32::Process::List;
   my $P = Win32::Process::List->new();	constructor
   my %list = $P->GetProcesses();	returns the hashes with PID and process name
-  foreach my $pr ( keys %list ) {
+  foreach my $key ( keys %list ) {
 	# $list{$key} is now the process name and $key is the PID
 	print sprintf("%30s has PID %15s", $list{$key}, $key) . "\n";
   }

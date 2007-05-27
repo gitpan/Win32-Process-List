@@ -1,5 +1,9 @@
 Revision history for Perl extension Win32::Process::List.
 
+
+0.09  May   2007
+	- fixed POD documentation
+
 0.08  April 2007
 	- fixed missing right curly or square bracket
 
